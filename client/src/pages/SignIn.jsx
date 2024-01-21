@@ -1,13 +1,19 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 
 export default function SignIn() {
 
   // keep tracking for all data
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  // const [error, setError] = useState(null);
+  // const [loading, setLoading] = useState(false);
+  // we can use the useSelecttor hook to use the global state of the user, what we declared in the userSlice.js
+  const { loading, error } = useSelector((state) => state.user);
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // funtioning the handleChange function
   const handleChange = (e) => {
@@ -23,8 +29,7 @@ export default function SignIn() {
 
     try {
       // before the submit the loading set to the true
-      setLoading(true);
-  
+      dispatch(signInStart());
       // sending the data to the server
       const res = await fetch('/api/auth/signin', 
       {
@@ -41,21 +46,27 @@ export default function SignIn() {
   
       // checking the success state of the data
       if (data.success === false) {
-        setLoading(false);
-        setError(data.message);
+        // setLoading(false);
+        // setError(data.message);
+        // insted of this we can use the dispatch our reduser functions
+        dispatch(signInFailure(data.message));
         return;
       }
   
       // setting the loading to false
-      setLoading(false);
-      setError(null);
+      // setLoading(false);
+      // setError(null);
+      // insted of this we can use the
+      dispatch(signInSuccess(data));
 
       // if all right navigate to the sign in page
       navigate('/');
       
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      // setLoading(false);
+      // setError(error.message);
+      // we can use the dispatched functions insted if this
+      dispatch(signInFailure(error.message));
     }
 
 
