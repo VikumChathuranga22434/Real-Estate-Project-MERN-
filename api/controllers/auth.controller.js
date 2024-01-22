@@ -61,3 +61,49 @@ export const signin = async (req, res, next) => {
         next(error);
     }
 };
+
+export const google = async (req, res, next) => {
+
+    try {
+        // checking the user excist
+        const user = await User.findOne({ email: req.body.email });
+
+        if(user) { // if the user email i means user exsist
+            // create the sign in 
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+            // when the passing data ignore the password
+            const { password: pass, ...rest } = user._doc;
+            res
+             .cookie('access_token', token, { httpOnly: true })
+             .status(200)
+             .json(rest);
+
+        } else {
+            // when user log using the email there a no password for the user to log in
+            // then we create a password for the db, bcz it is required
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            // hashing the password
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+            // the save the user to the DB
+            const user = new User({
+                username: req.body.name.split(" ").join("").toLowerCase() + Math.random().toString(36).slice(-4),
+                email: req.body.email,
+                password: hashedPassword,
+                avatar: req.body.photo,
+            });
+            // save new user
+            await user.save();
+            // so now registering the user to a cookie
+            const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+            const { password: pass, ...rest } = user._doc;
+            res
+             .cookie('access_token', token, { httpOnly: true })
+             .status(200)
+             .json(rest);
+        }
+        
+    } catch (error) {
+        next(error);
+    }
+
+};
