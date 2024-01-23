@@ -8,12 +8,13 @@ import { useNavigate } from 'react-router-dom';
 export default function OAuth() {
 
   const navigate = useNavigate();
+  
+  // initialize the dispatcher
+  const dispatch = useDispatch();
 
   const handleGoogleClick = async () => {
     try {
 
-      // initialize the dispatcher
-      const dispatch = useDispatch();
       
       // creating a const to get authentication provider
       const provider = new GoogleAuthProvider();
@@ -39,7 +40,7 @@ export default function OAuth() {
       })
 
       // convert the data to JSON
-      const data = await res.JSON();
+      const data = await res.json();
 
       // use the dispatch sign in success
       dispatch(signInSuccess(data));
