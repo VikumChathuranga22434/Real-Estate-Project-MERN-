@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSelector } from "react-redux";
-import { useRef } from "react";
 
 export default function Profile() {
   // getting the current user and saved details
@@ -11,7 +10,7 @@ export default function Profile() {
 
   // setting a change file state to the keep track of the image changes
   const [file, setFile] = useState(undefined);
-
+  console.log(file);
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
