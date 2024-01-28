@@ -107,6 +107,14 @@ export default function Profile() {
     }
   };
 
+  // implemtnting the handleDeleteUser function
+  const handleDeleteUser = (e) => {
+    try {
+    } catch (error) {
+      dispatch();
+    }
+  };
+
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -181,7 +189,12 @@ export default function Profile() {
 
       {/* implementing the delete account and sign out buttons */}
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
