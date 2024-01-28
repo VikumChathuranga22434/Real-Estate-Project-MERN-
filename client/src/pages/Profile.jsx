@@ -92,7 +92,7 @@ export default function Profile() {
       });
 
       // getting the res
-      const data = await res.JSON();
+      const data = await res.json();
 
       if (data.success === false) {
         dispatch(updateUserFaliure(data.message));
@@ -104,6 +104,14 @@ export default function Profile() {
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFaliure(error.message));
+    }
+  };
+
+  // implemtnting the handleDeleteUser function
+  const handleDeleteUser = (e) => {
+    try {
+    } catch (error) {
+      dispatch();
     }
   };
 
@@ -181,7 +189,12 @@ export default function Profile() {
 
       {/* implementing the delete account and sign out buttons */}
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
