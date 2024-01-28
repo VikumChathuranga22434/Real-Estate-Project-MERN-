@@ -92,7 +92,7 @@ export default function Profile() {
       });
 
       // getting the res
-      const data = await res.JSON();
+      const data = await res.json();
 
       if (data.success === false) {
         dispatch(updateUserFaliure(data.message));
