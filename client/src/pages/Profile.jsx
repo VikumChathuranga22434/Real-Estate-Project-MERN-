@@ -21,6 +21,7 @@ import {
 import { useDispatch } from "react-redux";
 import { current } from "@reduxjs/toolkit";
 import { errorHandler } from "../../../api/utils/error";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   // getting the current user and saved details
@@ -141,6 +142,7 @@ export default function Profile() {
         dispatch(singOutUserFaliure(data.message));
         return;
       }
+      dispatch(singOutUserSuccess(data));
     } catch (error) {
       dispatch(singOutUserFaliure(error.message));
     }
@@ -216,6 +218,12 @@ export default function Profile() {
         >
           {loading ? "Loading" : "Update"}
         </button>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link>
       </form>
 
       {/* implementing the delete account and sign out buttons */}
