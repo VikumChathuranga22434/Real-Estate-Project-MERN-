@@ -13,19 +13,24 @@ export default function CreateListing() {
   // 1. create a useState for the keep track on the image input changes
   const [files, setFiles] = useState([]);
 
-  // define a useState for the formaData
-  const [formaData, setFormData] = useState({
+  // define a useState for the formData
+  const [formData, setFormData] = useState({
     imageUrl: [],
   });
 
   // define a state for handle the loading effect of hte upload button and handle the error
   const [imageUploadError, setImageUploadError] = useState(false);
 
-  console.log(formaData);
+  // for loading effect
+  const [uploading, setUploading] = useState(false);
+
+  console.log(formData);
 
   // 2. submit the image upload (implementing the handleImageSubmit function)
   const handleImageSubmit = (e) => {
-    if (files.length > 0 && files.length + formaData.imageUrl.length < 7) {
+    if (files.length > 0 && files.length + formData.imageUrl.length < 7) {
+      setUploading(true);
+      setImageUploadError(false);
       const promises = [];
       for (let i = 0; i < files.length; i++) {
         promises.push(storeImage(files[i]));
@@ -33,16 +38,19 @@ export default function CreateListing() {
       Promise.all(promises)
         .then((urls) => {
           setFormData({
-            ...formaData,
-            imageUrl: formaData.imageUrl.concat(urls),
+            ...formData,
+            imageUrl: formData.imageUrl.concat(urls),
           });
           setImageUploadError(false);
+          setUploading(false);
         })
         .catch((err) => {
           setImageUploadError("Image Upload failed (2MB max per image)");
+          setUploading(false);
         });
     } else {
       setImageUploadError("You can only upload 6 images per listing");
+      setUploading(false);
     }
   };
 
@@ -71,6 +79,14 @@ export default function CreateListing() {
           });
         }
       );
+    });
+  };
+
+  // Delete the image form the Upload (implementing the handleRemoveImage)
+  const handleRemoveImage = (index) => {
+    setFormData({
+      ...formData,
+      imageUrl: formData.imageUrl.filter((_, i) => i !== index),
     });
   };
 
@@ -195,15 +211,36 @@ export default function CreateListing() {
             />
             <button
               type="button"
+              disabled={uploading}
               onClick={handleImageSubmit}
               className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
             >
-              Upload
+              {uploading ? "Uploading" : "Upload"}
             </button>
           </div>
           <p className="text-red-700 text-sm">
             {imageUploadError && imageUploadError}
           </p>
+          {formData.imageUrl.length > 0 &&
+            formData.imageUrl.map((url, index) => (
+              <div
+                key={url}
+                className="flex justify-between p-3 border items-center"
+              >
+                <img
+                  src={url}
+                  alt="listing image"
+                  className="w-20 h-20 object-contain rounded-lg"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="p-3 text-red-700 rounded-lg uppercase hover:opacity-75"
+                >
+                  Delete
+                </button>
+              </div>
+            ))}
           <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
             Create Listing
           </button>
