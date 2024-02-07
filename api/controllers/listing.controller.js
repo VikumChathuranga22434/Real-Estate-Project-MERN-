@@ -14,9 +14,9 @@ export const createListing = async (req, res, next) => {
 export const deleteListing = async (req, res, next) => {
   const listing = await Listing.findById(req.params.id);
 
-  // first check the listing excist
+  // first check the listing exist
   if (!listing) {
-    return next(errorHandler(401, "Listing not found!"));
+    return next(errorHandler(404, "Listing not found!"));
   }
 
   // check the user owns that listing or not
@@ -29,6 +29,32 @@ export const deleteListing = async (req, res, next) => {
     // then we delete the listing
     await Listing.findByIdAndDelete(req.params.id);
     res.status(200).json("Listing has been Deleted!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateListing = async (req, res, next) => {
+  // check the listing excist
+  const listing = await Listing.findById(req.params.id);
+
+  // first check the listing exist
+  if (!listing) {
+    return next(errorHandler(404, "Listing not found!"));
+  }
+
+  // check the user owns that listing or not
+  if (req.user.id !== listing.userRef) {
+    return next(errorHandler(401, "You can only update your own listings"));
+  }
+
+  try {
+    const updatedListing = await Listing.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedListing);
   } catch (error) {
     next(error);
   }
