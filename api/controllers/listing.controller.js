@@ -37,18 +37,15 @@ export const deleteListing = async (req, res, next) => {
 export const updateListing = async (req, res, next) => {
   // check the listing excist
   const listing = await Listing.findById(req.params.id);
-
   // first check the listing exist
-  if (!listing) {
-    return next(errorHandler(404, "Listing not found!"));
-  }
-
-  // check the user owns that listing or not
-  if (req.user.id !== listing.userRef) {
-    return next(errorHandler(401, "You can only update your own listings"));
-  }
-
   try {
+    if (!listing) {
+      return next(errorHandler(404, "Listing not found!"));
+    }
+    // check the user owns that listing or not
+    if (req.user.id !== listing.userRef) {
+      return next(errorHandler(401, "You can only update your own listings"));
+    }
     const updatedListing = await Listing.findByIdAndUpdate(
       req.params.id,
       req.body,
