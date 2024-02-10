@@ -1,0 +1,76 @@
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import SwiperCore from "swiper";
+import { Navigation } from "swiper/modules";
+import "swiper/css/bundle";
+
+export default function Listing() {
+  // initialize the packages
+  // 1. use navigation to navigation between the images
+  SwiperCore.use([Navigation]);
+
+  // initialize the useParams hook
+  const params = useParams();
+
+  // initialize the useState to store the listing data
+  const [listing, setListing] = useState(null);
+
+  // add loading effect
+  const [loading, setLoading] = useState(false);
+
+  // set error
+  const [error, setError] = useState(false);
+
+  // getting the listing details from the DB
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/listing/get/${params.listingID}`);
+        const data = await res.json();
+        if (data.success === false) {
+          setError(true);
+          setLoading(false);
+          return;
+        }
+        console.log(data);
+        setListing(data);
+        setLoading(false);
+        setError(false);
+      } catch (error) {
+        setLoading(false);
+        setError(true);
+      }
+    };
+    fetchListing();
+  }, [params.listingID]);
+
+  return (
+    <main>
+      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {error && (
+        <p className="text-center my-7 text-2xl">Something went wrong...</p>
+      )}
+
+      {/* if there is a listing */}
+      {listing && !loading && !error && (
+        <div>
+          <Swiper navigation>
+            {listing.imageUrls.map((url) => (
+              <SwiperSlide key={url}>
+                <div
+                  className="h-[550px]"
+                  style={{
+                    background: `url(${url}) center no-repeat`,
+                    backgroundSize: "cover",
+                  }}
+                ></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      )}
+    </main>
+  );
+}
