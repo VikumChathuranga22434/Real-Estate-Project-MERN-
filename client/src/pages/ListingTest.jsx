@@ -1,13 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-// import { Carousel } from "@material-tailwind/react";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore from 'swiper';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css/bundle';
 
 export default function ListingTest() {
+  // intialize the swiper
+  SwiperCore.use([Navigation]);
+
   // get the listingId
   const params = useParams();
 
   // set listing details
   const [listing, setListing] = useState(null);
+
+  // set the image urls
+  const [imageUrls, setImageUrls] = useState([]);
 
   // setting error to a state
   const [error, setError] = useState(false);
@@ -30,6 +39,8 @@ export default function ListingTest() {
         }
         // setting data
         setListing(data);
+        setImageUrls(data.imageUrls);
+        console.log(data.imageUrls);
         console.log(data);
 
         setLoading(false);
@@ -44,28 +55,28 @@ export default function ListingTest() {
 
   return (
     <main>
-      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
+      {loading && <p className='text-center my-7 text-2xl'>Loading...</p>}
       {error && (
-        <p className="text-center my-7 text-2xl">Something went Wrong...</p>
+        <p className='text-center my-7 text-2xl'>Something went Wrong...</p>
       )}
-      {listing && <p>{listing.name}</p>}
-      {/* <Carousel transition={{ duration: 2 }} className="rounded-xl">
-        <img
-          src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-          alt="image 1"
-          className="h-full w-full object-cover"
-        />
-        <img
-          src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
-          alt="image 2"
-          className="h-full w-full object-cover"
-        />
-        <img
-          src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
-          alt="image 3"
-          className="h-full w-full object-cover"
-        />
-      </Carousel> */}
+
+      {listing && !loading && !error && (
+        <div>
+          <Swiper navigation>
+            {imageUrls.map((url) => (
+              <SwiperSlide key={url}>
+                <div
+                  className='h-[550px]'
+                  style={{
+                    background: `url(${url}) center no-repeat`,
+                    backgroundSize: 'cover',
+                  }}
+                ></div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      )}
     </main>
   );
 }
