@@ -14,6 +14,7 @@ import {
   FaShare,
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import Contact from '../components/Contact';
 
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
@@ -41,6 +42,9 @@ export default function ListingTest() {
 
   // get the copy link state
   const [copied, setCopied] = useState(false);
+
+  // contact state
+  const [contact, setContact] = useState(false);
 
   // get the listing details from the DB
   useEffect(() => {
@@ -168,6 +172,17 @@ export default function ListingTest() {
                 {listing.furnished ? 'Furnished' : 'Unfurnished'}
               </li>
             </ul>
+
+            {currentUser && !contact && listing.userRef !== currentUser._id && (
+              <button
+                onClick={() => setContact(true)}
+                className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'
+              >
+                Contact landLord
+              </button>
+            )}
+
+            {contact && <Contact listing={listing} />}
           </div>
         </div>
       )}
