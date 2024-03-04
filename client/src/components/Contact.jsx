@@ -8,9 +8,6 @@ export default function Contact({ listing }) {
   // set message
   const [message, setMessage] = useState('');
 
-  //console log
-  console.log(landlord);
-
   // useEffect run one time base on the listing
   useEffect(() => {
     //fetch the landlord
